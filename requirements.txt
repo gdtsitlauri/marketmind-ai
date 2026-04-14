@@ -1,0 +1,6 @@
+praw
+pandas
+torch
+transformers
+openpyxl
+tqdm

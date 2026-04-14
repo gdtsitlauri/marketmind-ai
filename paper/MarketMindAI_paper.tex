@@ -1,0 +1,173 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{placeins}
+\geometry{margin=1in}
+
+\title{MarketMind AI: Behavioral Finance, Internet Psychology, and Cryptocurrency Markets}
+\author{George David Tsitlauri \\ Vasilis Prodromos Tsaousis}
+\date{April 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This study presents MarketMind AI, a modular research pipeline that links online investor psychology to cryptocurrency market behavior. We combine Reddit-derived sentiment signals, a market-level Fear and Greed index, and technical market features with classical econometric and machine-learning models. The empirical workflow is fully scripted (data ingestion, sentiment extraction, feature engineering, merge, diagnostics, and reporting), enabling replication and auditability. The analysis evaluates explanatory and predictive power through Ordinary Least Squares (OLS), Vector Autoregression (VAR), Granger causality, and Random Forest regression. Results indicate that volatility and negative sentiment are the most relevant drivers of short-horizon return dynamics, while non-linear models provide stronger in-sample predictive fit than linear baselines. We explicitly document data limitations and inference constraints so conclusions remain methodologically sound.
+\end{abstract}
+
+\section{Introduction}
+Cryptocurrency markets are highly sensitive to narrative shocks, crowd behavior, and social-media feedback loops. In this environment, behavioral finance and internet psychology are not peripheral factors; they are often central to price formation. MarketMind AI was designed to systematically measure these effects by combining textual sentiment extraction with econometric inference and predictive modeling.
+
+The contribution of this paper is threefold. First, it provides a complete and reproducible data-to-model pipeline that integrates financial and sentiment data at daily frequency. Second, it evaluates both explanatory and predictive frameworks so that inferential findings and forecasting utility can be compared directly. Third, it offers an interpretable set of diagnostics that clarifies when sentiment has statistical signal and when market mechanics dominate.
+
+\section{Data and Preprocessing}
+\subsection{Repository-Level Data Lineage}
+The end-to-end pipeline is implemented through four scripts:
+\begin{itemize}
+    \item \texttt{scripts/reddit\_kaggle\_ai.py}: loads Reddit historical posts, computes FinBERT sentiment probabilities (positive/negative/neutral), and creates \texttt{exports/Reddit\_AI\_Sentiment.xlsx}.
+    \item \texttt{scripts/merge\_data.py}: downloads BTC/ETH daily market data (Yahoo Finance), fetches Fear and Greed index, computes technical indicators, and creates per-asset master files.
+    \item \texttt{scripts/final\_merge.py}: merges market features with daily AI sentiment and exports \texttt{exports/ULTIMATE\_Data.xlsx} and \texttt{exports/ULTIMATE\_Data.csv}.
+    \item \texttt{scripts/run\_regression.py}: estimates OLS/VAR/Granger/Random Forest models, diagnostic checks, and \texttt{results/Market\_Analysis\_Report.txt}.
+\end{itemize}
+This sequence ensures that every table, metric, and interpretation in the paper can be traced to a specific script and artifact.
+
+\subsection{Financial Data}
+We use daily OHLCV (open, high, low, close, volume) series for major cryptocurrencies (including BTC and ETH) retrieved from Yahoo Finance. From these base series we compute:
+\begin{itemize}
+    \item Daily log returns,
+    \item Rolling volatility (5-day standard deviation of log returns),
+    \item Trend and momentum indicators (SMA, EMA, RSI, MACD),
+    \item Market-regime indicator (\texttt{bull\_market}, defined by \texttt{close > SMA\_200}).
+\end{itemize}
+
+\subsection{Sentiment and Behavioral Data}
+Textual data are collected from Reddit (\texttt{r/CryptoCurrency}) and processed through a sentiment pipeline based on FinBERT. After cleaning and spam/bot filtering, posts are scored and aggregated daily into sentiment factors (positive, negative, neutral). We also include a daily Fear and Greed index as a behavioral proxy capturing broader risk appetite.
+
+\subsection{Merged Analytical Dataset}
+All variables are merged by date and aligned to a single modeling table containing financial, technical, and sentiment features. A data dictionary was created to preserve variable semantics and improve reproducibility.
+
+\subsection{Effective Sample Construction}
+The exported merged dataset contains 332 rows (BTC and ETH observations combined) spanning 2021-07-19 to 2021-12-31. The baseline econometric specification requires complete cases for \texttt{log\_returns}, \texttt{fear\_greed}, \texttt{positive}, \texttt{negative}, and \texttt{volatility}; after strict listwise deletion, the effective sample used in the global model is 20 observations. This reduction materially affects statistical power and is therefore treated explicitly in interpretation.
+
+\section{Methodology}
+\subsection{Econometric Specification}
+We estimate the following baseline OLS model:
+\[
+\texttt{log\_returns}_t = \beta_0 + \beta_1 \texttt{fear\_greed}_t + \beta_2 \texttt{positive}_t + \beta_3 \texttt{negative}_t + \beta_4 \texttt{volatility}_t + \varepsilon_t.
+\]
+The model quantifies contemporaneous relationships between returns and behavioral/market controls.
+
+\subsection{Dynamic and Causality Analysis}
+To capture temporal interactions, we fit a VAR model with lag order 2 over \texttt{log\_returns}, \texttt{fear\_greed}, \texttt{positive}, \texttt{negative}, and \texttt{volatility}. Granger causality tests are then used to assess whether lagged returns predict sentiment dynamics (and vice versa within the system context).
+
+\subsection{Machine-Learning Benchmark}
+A Random Forest regressor is used as a non-linear benchmark for predictive performance. Feature importance scores are reported to compare driver relevance against linear coefficient-based interpretation. Because the current script reports in-sample fit, machine-learning performance is interpreted as an upper-bound descriptive benchmark rather than out-of-sample forecast accuracy.
+
+\subsection{Diagnostics}
+We apply standard econometric diagnostics: Variance Inflation Factor (VIF) for multicollinearity and Augmented Dickey-Fuller (ADF) testing for stationarity.
+
+\section{Results}
+\subsection{Core Sample Facts}
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+Metric & Value \\
+\midrule
+Merged dataset rows & 332 \\
+Model-ready complete cases & 20 \\
+Date range & 2021-07-19 to 2021-12-31 \\
+Assets & BTC, ETH \\
+Target variable & \texttt{log\_returns} \\
+Key predictors & \texttt{fear\_greed}, \texttt{positive}, \texttt{negative}, \texttt{volatility} \\
+\bottomrule
+\end{tabular}
+\caption{Observed sample characteristics from \texttt{ULTIMATE\_Data.csv}.}
+\end{table}
+
+\subsection{OLS and Diagnostics}
+The OLS model yields $R^2 = 0.430$ (adjusted $R^2 = 0.277$), indicating moderate explanatory power in a short-horizon setting. Among the included predictors, volatility is statistically significant and negatively associated with returns (\texttt{coef} $=-1.3533$, $p=0.017$), while sentiment coefficients are directionally negative but not individually significant at conventional thresholds.
+
+VIF values for explanatory variables are low (approximately 1.06--1.25), implying no severe multicollinearity in the main regressors. The ADF test reports a near-zero p-value, supporting stationarity of the dependent series under the tested setup.
+
+\subsection{VAR and Granger Findings}
+In the VAR(2), lagged positive sentiment and lagged volatility appear informative for return dynamics in selected equations, indicating that sentiment effects can emerge through lag structure rather than contemporaneous linear terms only. However, Granger causality tests for \texttt{log\_returns $\rightarrow$ fear\_greed} do not provide statistical support at lags 1--2 (p-values around 0.50--0.54). This suggests weak evidence for a direct predictive channel from returns to aggregate fear/greed in this sample.
+
+\subsection{Machine-Learning Performance}
+The Random Forest model reaches $R^2 = 0.8675$, substantially above OLS. Feature importances rank \texttt{volatility} as the dominant predictor, followed by \texttt{negative} sentiment, \texttt{fear\_greed}, and \texttt{positive} sentiment. This pattern supports a non-linear interaction narrative where stress-related signals and risk conditions drive short-term return variation more strongly than positive sentiment alone.
+
+\subsection{Visual Evidence}
+Figure-based diagnostics and model-output charts are generated by \texttt{run\_regression.py} and stored in \texttt{results/}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{../results/Model_Prediction_Accuracy.png}
+\caption{Actual versus OLS and Random Forest predictions for log returns.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{../results/Market_Driver_Impact_OLS.png}
+\caption{Estimated OLS coefficients for the main explanatory variables.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{../results/Feature_Importances_RF.png}
+\caption{Random Forest feature importances across sentiment and volatility predictors.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{../results/Correlation_Heatmap.png}
+\caption{Correlation matrix heatmap for target and key regressors.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{../results/Rolling_Correlation.png}
+\caption{Rolling correlation between \texttt{log\_returns} and \texttt{fear\_greed}.}
+\end{figure}
+\FloatBarrier
+
+\section{Discussion}
+The empirical findings indicate that market stress and adverse sentiment are more informative than optimistic sentiment for explaining short-term crypto returns. This is consistent with behavioral-finance theory, where loss aversion and panic effects frequently produce stronger market responses than positive narratives. The gap between OLS and Random Forest performance further suggests non-linearity and interaction effects that simple linear specifications only partially capture.
+
+At the same time, causality claims should remain conservative. The effective model sample is small, social sentiment proxies can be noisy or platform-specific, and the machine-learning metric is in-sample. The results are therefore best interpreted as evidence of measurable association and short-horizon signal, not definitive structural causation.
+
+\section{Conclusion}
+MarketMind AI delivers an end-to-end framework for quantifying the relationship between online psychology and cryptocurrency returns. Across models, volatility and negative sentiment emerge as the most impactful factors, while non-linear methods provide superior predictive fit. The pipeline is reproducible, modular, and suitable for extension to larger samples, additional social channels, and asset-level robustness analyses.
+
+\section{Limitations and Future Work}
+Future iterations should include longer time horizons, higher-frequency observations, and broader text sources (e.g., X/Twitter, news feeds, forum micro-communities). Additional causal identification strategies (instrumental variables, regime-switching models, or event-study designs) would strengthen inference and help separate sentiment effects from concurrent macro shocks. Methodologically, the next version should add train/validation/test splits (or walk-forward validation), robust standard errors, and sensitivity analysis to alternative sentiment aggregation windows.
+
+\section{Reproducibility Protocol}
+To regenerate all research artifacts from the repository:
+\begin{enumerate}
+    \item Install dependencies from \texttt{requirements.txt}.
+    \item Run \texttt{scripts/reddit\_kaggle\_ai.py} to create daily AI sentiment aggregates.
+    \item Run \texttt{scripts/merge\_data.py} and \texttt{scripts/final\_merge.py} to produce \texttt{ULTIMATE\_Data}.
+    \item Run \texttt{scripts/run\_regression.py} to create the regression report and charts.
+\end{enumerate}
+All major conclusions in this paper are mapped directly to \texttt{results/Market\_Analysis\_Report.txt}.
+
+\clearpage
+\FloatBarrier
+\section*{References}
+\begin{enumerate}
+    \item Barberis, N., \& Thaler, R. (2003). A survey of behavioral finance. In G. M. Constantinides, M. Harris, \& R. M. Stulz (Eds.), \textit{Handbook of the Economics of Finance} (pp. 1053--1128). Elsevier.
+    \item Bollen, J., Mao, H., \& Zeng, X. (2011). Twitter mood predicts the stock market. \textit{Journal of Computational Science}, 2(1), 1--8.
+    \item Devlin, J., Chang, M.-W., Lee, K., \& Toutanova, K. (2019). BERT: Pre-training of deep bidirectional transformers for language understanding. In \textit{Proceedings of NAACL-HLT}.
+    \item Araci, D. (2019). FinBERT: Financial sentiment analysis with pre-trained language models. \textit{arXiv preprint arXiv:1908.10063}.
+    \item Hamilton, J. D. (1994). \textit{Time Series Analysis}. Princeton University Press.
+    \item Breiman, L. (2001). Random forests. \textit{Machine Learning}, 45(1), 5--32.
+\end{enumerate}
+
+\end{document}

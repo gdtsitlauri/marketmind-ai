@@ -1,0 +1,27 @@
+# MarketMind AI - Pipeline Configuration
+
+# Paths
+input_data: exports/ULTIMATE_Data.xlsx
+results_dir: results/
+plots_dir: results/
+
+# Analysis Parameters
+rolling_window: 30  # Default, auto-adjusts if not enough data
+min_sample: 20
+cryptos: [BTC, ETH]
+periods:
+  - null
+  - [2021-01-01, 2021-06-30]
+  - [2021-07-01, 2022-01-01]
+lags_to_test: [1, 2, 3]
+
+# ML/AI
+sentiment_model: ProsusAI/finbert
+batch_size: 16
+use_cuda: true
+
+# Output
+save_logs: true
+log_file: results/pipeline.log
+
+# Add more parameters as needed

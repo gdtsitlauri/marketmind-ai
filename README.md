@@ -1,6 +1,15 @@
 
 # MarketMind AI
 
+**Year:** 2026
+
+## Authors
+
+| Name | Affiliation | Contact |
+|---|---|---|
+| George David Tsitlauri | Dept. of Informatics & Telecommunications, University of Thessaly, Greece | gdtsitlauri@gmail.com |
+| Vasileios Prodromos Tsaousis | Dept. of Economics, University of Cyprus, Cyprus | vptsaousis@gmail.com |
+
 **Modern Behavioral Finance & Internet Psychology Analysis for Cryptocurrencies**
 
 ---
@@ -56,3 +65,15 @@ See `results/data_dictionary.txt` for a full description of all variables.
 
 ---
 *For scientific use, presentation, or extension, contact the project authors.*
+
+## Citation
+
+```bibtex
+@misc{tsitlauri2026marketmindai,
+  author = {George David Tsitlauri},
+  title  = {MarketMind AI: Behavioral Finance and Internet Psychology Analysis for Cryptocurrencies},
+  year   = {2026},
+  institution = {University of Thessaly},
+  email  = {gdtsitlauri@gmail.com}
+}
+```

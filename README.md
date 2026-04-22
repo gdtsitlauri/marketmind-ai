@@ -4,11 +4,18 @@
 
 **Authors:** George David Tsitlauri, Vasileios Prodromos Tsaousis  
 **Contacts:** gdtsitlauri@gmail.com, vptsaousis@gmail.com  
-**Website:** gdtsitlauri.dev  
-**GitHub:** github.com/gdtsitlauri  
-**Year:** 2026
 
 MarketMind AI is a reproducible research pipeline that links online sentiment and behavioral-finance proxies to short-horizon cryptocurrency market dynamics. The repository combines Reddit sentiment extraction, market-data ingestion, feature engineering, econometric analysis, and report generation.
+
+
+## Project Metadata
+
+| Field | Value |
+| --- | --- |
+| Author | George David Tsitlauri |
+| Affiliation | Dept. of Informatics & Telecommunications, University of Thessaly, Greece |
+| Contact | gdtsitlauri@gmail.com |
+| Year | 2026 |
 
 ## Evidence Status
 
@@ -88,13 +95,4 @@ python scripts/run_regression.py
 - Machine-learning performance is currently best interpreted as descriptive or in-sample.
 - Sentiment signals come from a limited social source mix and time range.
 
-## Citation
 
-```bibtex
-@misc{tsitlauri2026marketmindai,
-  author = {George David Tsitlauri and Vasileios Prodromos Tsaousis},
-  title  = {MarketMind AI: Behavioral Finance and Internet Psychology Analysis for Cryptocurrencies},
-  year   = {2026},
-  url    = {https://github.com/gdtsitlauri}
-}
-```

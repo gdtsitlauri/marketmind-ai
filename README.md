@@ -1,79 +1,100 @@
-
 # MarketMind AI
 
+**Behavioral Finance and Internet Psychology Analysis for Cryptocurrency Markets**
+
+**Authors:** George David Tsitlauri, Vasileios Prodromos Tsaousis  
+**Contacts:** gdtsitlauri@gmail.com, vptsaousis@gmail.com  
+**Website:** gdtsitlauri.dev  
+**GitHub:** github.com/gdtsitlauri  
 **Year:** 2026
 
-## Authors
+MarketMind AI is a reproducible research pipeline that links online sentiment and behavioral-finance proxies to short-horizon cryptocurrency market dynamics. The repository combines Reddit sentiment extraction, market-data ingestion, feature engineering, econometric analysis, and report generation.
 
-| Name | Affiliation | Contact |
-|---|---|---|
-| George David Tsitlauri | Dept. of Informatics & Telecommunications, University of Thessaly, Greece | gdtsitlauri@gmail.com |
-| Vasileios Prodromos Tsaousis | Dept. of Economics, University of Cyprus, Cyprus | vptsaousis@gmail.com |
+## Evidence Status
 
-**Modern Behavioral Finance & Internet Psychology Analysis for Cryptocurrencies**
+| Item | Current status |
+| --- | --- |
+| End-to-end scripted pipeline | Present |
+| Real market and Reddit-derived inputs | Present |
+| Econometric report artifacts | Present |
+| Machine-learning benchmark | Present |
+| Strong causal identification claims | Not supported by the current sample size |
 
----
+## Research Positioning
 
-## Description
-MarketMind AI is a complete, modular pipeline for analyzing the relationship between internet sentiment (behavioral biases like FOMO/FUD) and cryptocurrency prices, using advanced econometric and AI techniques.
+The strongest evidence-backed story in the repository is:
 
-## Pipeline Structure
-1. **Data Collection**
-   - Scraping Reddit (r/CryptoCurrency) & financial data (Yahoo Finance)
-2. **Cleaning & Preprocessing**
-   - Text cleaning, bot/spam removal
-3. **AI Sentiment Analysis**
-   - FinBERT (or similar) with CUDA (GTX 1650)
-   - Daily aggregation: Positive/Negative/Fear-Greed
-4. **Merging & Export**
-   - Final CSV/Excel with all features
-5. **Econometric Analysis**
-   - OLS, VAR, Granger, VIF, ADF, ML (Random Forest)
-   - Robustness checks per crypto/period
-   - Automatic interpretation of results
-6. **Reports & Visualizations**
-   - Professional reports, plots, data dictionary
+> short-horizon cryptocurrency returns show measurable association with volatility and negative sentiment proxies, while the current data coverage is too limited for strong causal claims.
 
-## Usage Instructions
-1. Install requirements:
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. Run the pipeline:
-   ```bash
-   python scripts/merge_data.py
-   python scripts/final_merge.py
-   python scripts/run_regression.py
-   ```
-3. All results will be found in the `results/` folder.
+That is a credible and useful applied-finance project. It is better than overselling a small-sample result as definitive market science.
 
-## System Requirements
-- Windows 10/11, Python 3.10+
-- NVIDIA GTX 1650 (4GB VRAM) or better (for CUDA)
-- 16GB RAM
+## Pipeline Overview
 
-## Data Dictionary
-See `results/data_dictionary.txt` for a full description of all variables.
+| Stage | Main script | Output |
+| --- | --- | --- |
+| Sentiment extraction | `scripts/reddit_kaggle_ai.py` | daily Reddit sentiment aggregates |
+| Market data + features | `scripts/merge_data.py` | per-asset market features |
+| Final analytical merge | `scripts/final_merge.py` | `exports/ULTIMATE_Data.csv` / `.xlsx` |
+| Econometric analysis | `scripts/run_regression.py` | `results/Market_Analysis_Report.txt` and plots |
 
-## Example Outputs
-- Detailed reports: `results/Market_Analysis_Report*.txt`
-- Plots: `results/*.png`
+## Data Basis
 
-## Authors
-- George David Tsitlauri
-- Vasilis Prodromos Tsaousis
+- Reddit posts from `r/CryptoCurrency`
+- Yahoo Finance cryptocurrency market data
+- Fear and Greed index
+- engineered volatility and technical indicators
 
----
-*For scientific use, presentation, or extension, contact the project authors.*
+The merged analytical dataset covers 332 rows, but the strict complete-case econometric specification used in the paper reduces the effective sample for the main OLS model to 20 observations. That sample-size reduction is a central limitation and is treated explicitly in the paper.
+
+## Current Findings
+
+Source: `results/Market_Analysis_Report.txt`
+
+- OLS: `R^2 = 0.430`, adjusted `R^2 = 0.277`
+- Volatility is the clearest statistically significant driver in the main specification
+- Negative sentiment is directionally informative but not individually strong at conventional thresholds in the current sample
+- Random Forest achieves stronger in-sample fit than OLS, suggesting non-linear effects
+
+## Repository Layout
+
+```text
+scripts/
+  reddit_kaggle_ai.py
+  merge_data.py
+  final_merge.py
+  run_regression.py
+exports/
+results/
+  Market_Analysis_Report.txt
+  *.png
+paper/
+  MarketMindAI_paper.tex
+requirements.txt
+```
+
+## Reproducibility
+
+```bash
+pip install -r requirements.txt
+python scripts/reddit_kaggle_ai.py
+python scripts/merge_data.py
+python scripts/final_merge.py
+python scripts/run_regression.py
+```
+
+## Limitations
+
+- Effective econometric sample size is small.
+- Machine-learning performance is currently best interpreted as descriptive or in-sample.
+- Sentiment signals come from a limited social source mix and time range.
 
 ## Citation
 
 ```bibtex
 @misc{tsitlauri2026marketmindai,
-  author = {George David Tsitlauri},
+  author = {George David Tsitlauri and Vasileios Prodromos Tsaousis},
   title  = {MarketMind AI: Behavioral Finance and Internet Psychology Analysis for Cryptocurrencies},
   year   = {2026},
-  institution = {University of Thessaly},
-  email  = {gdtsitlauri@gmail.com}
+  url    = {https://github.com/gdtsitlauri}
 }
 ```
